@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User.js');
+const User = require('../models/userSchema.js');
 
 module.exports = (req, res, next) => {
   // Get token from headers
@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
 
   try {
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.SECRET);
 
     // Attach the decoded user to the request object
     req.user = decoded;

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat Room</title>
+    <style>
+      #chatBox {
+        width: 500px;
+        height: 400px;
+        border: 1px solid black;
+        overflow-y: scroll;
+      }
+      #messageInput {
+        width: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome to the <%= roomName %> chat room</h1>
+    <div id="chatBox">
+      <% messages.forEach(function(message) { %>
+      <p><strong><%= message.user %>:</strong> <%= message.text %></p>
+      <% }) %>
+    </div>
+    <input id="messageInput" type="text" placeholder="Type your message here" />
+    <button id="sendMessage">Send</button>
+
+    <script>
+      document
+        .getElementById('sendMessage')
+        .addEventListener('click', function () {
+          const messageInput = document.getElementById('messageInput');
+          const messageText = messageInput.value;
+
+          fetch('/api/messages', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: messageText,
+              room: '<%= roomId %>',
+              // the actual user id would need to be fetched from somewhere
+              user: 'someUserId',
+            }),
+          })
+            .then((response) => response.json())
+            .then((message) => {
+              const chatBox = document.getElementById('chatBox');
+              const messageP = document.createElement('p');
+              messageP.innerHTML = `<strong>${message.user}:</strong> ${message.text}`;
+              chatBox.appendChild(messageP);
+              messageInput.value = '';
+            })
+            .catch((error) => console.error('Error:', error));
+        });
+    </script>
+  </body>
+</html>
